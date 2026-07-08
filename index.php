@@ -10,7 +10,7 @@ $assemblyPointCount = $pdo->query("SELECT COUNT(*) c FROM assembly_points")->fet
 
 $evacuatedCount = 0;
 $missingCount = 0;
-$eventStatusLabel = 'منتهٍ';
+$eventStatusLabel = 'منتهي';
 $eventStatusColor = 'var(--gray)';
 
 $perPointStats = $pdo->query("SELECT id, name, capacity FROM assembly_points ORDER BY id")->fetchAll();
