@@ -10,6 +10,7 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
+    $pdo->exec("SET NAMES utf8mb4");
 } catch (PDOException $e) {
     die('فشل الاتصال بقاعدة البيانات: ' . htmlspecialchars($e->getMessage()) .
         '<br>تأكد MySQL يعمل في XAMPP وأنك استوردت db.sql، وأن بيانات الاتصال في includes/db.php صحيحة.');
