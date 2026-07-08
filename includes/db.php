@@ -3,7 +3,8 @@ $host   = $_ENV['MYSQLHOST'] ?? getenv('MYSQLHOST') ?: 'localhost';
 $port   = $_ENV['MYSQLPORT'] ?? getenv('MYSQLPORT') ?: '3306';
 $dbname = $_ENV['MYSQLDATABASE'] ?? getenv('MYSQLDATABASE') ?: 'eams_db';
 $user   = $_ENV['MYSQLUSER'] ?? getenv('MYSQLUSER') ?: 'root';
-$pass   = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?: '';
+$pass   = $_ENV['MYSQLPASSWORD'] ?? getenv('MYSQLPASSWORD') ?: ''; 
+
 try {
 $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
