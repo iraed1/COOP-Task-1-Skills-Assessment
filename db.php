@@ -1,11 +1,11 @@
 <?php
-$host = 'localhost';
-$dbname = 'eams_db';
-$user = 'root';
-$pass = '';
-
+$host   = getenv('MYSQLHOST') ?: 'localhost';
+$port   = getenv('MYSQLPORT') ?: '3306';
+$dbname = getenv('MYSQLDATABASE') ?: 'eams_db';
+$user   = getenv('MYSQLUSER') ?: 'root';
+$pass   = getenv('MYSQLPASSWORD') ?: '';
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [
+   $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
