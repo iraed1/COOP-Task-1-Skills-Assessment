@@ -1,3 +1,6 @@
+## رابط الموقع المباشر (Live Demo)
+[اضغط هنا لتجربة الموقع](https://coop-task-1-skills-assessment-production.up.railway.app/)
+
 # نظام إدارة التجمع الطارئ — نسخة PHP + MySQL (لـ XAMPP)
 
 تطبيق PHP كامل يعمل بقاعدة بيانات MySQL حقيقية، يطابق مخطط قاعدة البيانات المذكور في وثيقة المشروع.
