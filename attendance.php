@@ -79,8 +79,17 @@ if ($activeEvent) {
       <input type="hidden" name="ap_id" value="<?= $apId ?>">
       <input type="text" name="q" placeholder="ابحث بالاسم أو الرقم الوظيفي" value="<?= h($search) ?>">
       <button type="submit" class="btn-secondary">بحث</button>
-      <a href="attendance.php?ap_id=<?= $apId ?>&qr=1" class="btn-secondary">محاكاة مسح QR</a>
+      <button type="button" class="btn-primary" onclick="startScanner()">مسح الباركود بالكاميرا</button>
     </form>
+
+    <div class="card" id="scanner-card" style="display:none; margin-top:16px; padding:16px;">
+      <div class="card-title" style="margin-bottom:10px;">مسح الباركود</div>
+      <div id="reader" style="width:100%; max-width:340px; margin:0 auto;"></div>
+      <div id="scan-result" class="muted small" style="margin-top:10px; text-align:center;">وجّه الكاميرا نحو باركود الموظف</div>
+      <div style="text-align:center; margin-top:10px;">
+        <button type="button" class="btn-secondary" onclick="stopScanner()">إيقاف المسح</button>
+      </div>
+    </div>
     <div style="margin-top:16px;">
       <?php foreach ($candidates as $c): ?>
         <div class="candidate-row">
@@ -118,6 +127,71 @@ if ($activeEvent) {
     <div class="muted" style="margin-bottom:18px;">يجب بدء حدث إخلاء أولاً لتسجيل الحضور</div>
     <a href="events.php" class="btn-primary" style="display:inline-block;">الذهاب إلى حدث الإخلاء</a>
   </div>
+<?php endif; ?>
+
+<?php if ($activeEvent): ?>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+let html5QrCode = null;
+let scanLocked = false;
+const currentApId = <?= (int)$apId ?>;
+
+function startScanner() {
+  document.getElementById('scanner-card').style.display = 'block';
+  if (html5QrCode) return; // already running
+  html5QrCode = new Html5Qrcode("reader");
+  const config = { fps: 10, qrbox: { width: 260, height: 140 } };
+  html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+    .catch(function (err) {
+      document.getElementById('scan-result').innerHTML =
+        '<span style="color:#c00;">تعذّر تشغيل الكاميرا: ' + err + '</span>';
+    });
+}
+
+function stopScanner() {
+  if (html5QrCode) {
+    html5QrCode.stop().then(function () {
+      html5QrCode.clear();
+      html5QrCode = null;
+      document.getElementById('scanner-card').style.display = 'none';
+    }).catch(function () {
+      html5QrCode = null;
+      document.getElementById('scanner-card').style.display = 'none';
+    });
+  }
+}
+
+function onScanSuccess(decodedText) {
+  if (scanLocked) return;
+  scanLocked = true;
+  const resultEl = document.getElementById('scan-result');
+  resultEl.textContent = 'جارٍ التحقق من ' + decodedText + ' ...';
+
+  fetch('scan_checkin.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'code=' + encodeURIComponent(decodedText) + '&ap_id=' + currentApId
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.status === 'success') {
+        resultEl.innerHTML = '<span style="color:#0a8f45;">✔ تم تسجيل: ' + data.name + '</span>';
+      } else if (data.status === 'already') {
+        resultEl.innerHTML = '<span style="color:#c88a00;">⚠ مسجل مسبقاً: ' + data.name + '</span>';
+      } else {
+        resultEl.innerHTML = '<span style="color:#c00;">✘ ' + data.message + '</span>';
+      }
+      setTimeout(function () {
+        scanLocked = false;
+        resultEl.textContent = 'جاهز لمسح التالي...';
+      }, 1500);
+    })
+    .catch(function () {
+      resultEl.textContent = 'خطأ بالاتصال، حاول مرة أخرى';
+      scanLocked = false;
+    });
+}
+</script>
 <?php endif; ?>
 
 <?php include 'includes/layout_bottom.php'; ?>
