@@ -73,15 +73,16 @@ $employees = $listStmt->fetchAll();
 
     <div class="muted-label">عرض <?= min(100, $totalFiltered) ?> من أصل <?= $totalFiltered ?></div>
 
-    <div class="grid-row grid-head">
-      <span>الاسم</span><span>الرقم الوظيفي</span><span>القسم</span><span>المبنى</span>
+    <div class="grid-row grid-row-5 grid-head">
+      <span>الاسم</span><span>الرقم الوظيفي</span><span>القسم</span><span>المبنى</span><span>الباركود</span>
     </div>
     <?php foreach ($employees as $e): ?>
-      <div class="grid-row">
+      <div class="grid-row grid-row-5">
         <span class="bold"><?= h($e['name']) ?></span>
         <span class="muted"><?= h($e['employee_number']) ?></span>
         <span><?= h($e['department']) ?></span>
         <span><?= h($e['building_name']) ?></span>
+        <span><a href="barcode.php?id=<?= (int)$e['id'] ?>" target="_blank" class="btn-outline">عرض/طباعة</a></span>
       </div>
     <?php endforeach; ?>
     <?php if (!$employees): ?><div class="empty-note">لا يوجد موظفون مطابقون</div><?php endif; ?>
